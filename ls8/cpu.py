@@ -20,6 +20,7 @@ class CPU:
             0b01000111: self.PRN,
             0b00000001: self.HLT,
             0b10100010: self.MUL,
+            0b10100000: self.ADD,
             0b01000101: self.PUSH,
             0b01000110: self.POP,
             0b01010000: self.CALL,
@@ -53,6 +54,11 @@ class CPU:
         num1 = self.ram_read(self.pc+1)
         num2 = self.ram_read(self.pc+2)
         self.alu('MUL', num1, num2)
+    
+    def ADD(self):
+        num1 = self.ram_read(self.pc+1)
+        num2 = self.ram_read(self.pc+2)
+        self.alu('ADD', num1, num2)
 
     def PUSH(self):
         self.sp -= 1
@@ -67,10 +73,19 @@ class CPU:
         self.sp += 1
 
     def CALL(self):
-        pass
+        self.sp-=1
+
+        return_address = self.pc+2
+        self.ram[self.sp] = return_address
+
+        register_index = self.ram[self.pc+1]
+        self.pc = self.register[register_index]
 
     def RET(self):
-        pass
+        return_address = self.ram[self.sp]
+
+        self.pc = return_address
+        self.sp+=1
 
     def load(self):
         """Load a program into memory."""
@@ -84,22 +99,19 @@ class CPU:
                     v = int(line, 2)
                 except ValueError:
                     continue
-                # print(v)
+                # print(f"{v:08b}: {v:d}")
                 self.ram[address] = v
                 address+=1
         # print(self.ram[:15])
 
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
-        #elif op == "SUB": etc
-
         if op == "ADD":
             self.register[reg_a] += self.register[reg_b]
         elif op == "SUB":
             self.register[reg_a] -= self.register[reg_b]
         elif op == 'MUL':
             self.register[reg_a] *= self.register[reg_b]
-            # print(f'REGISTER {self.register}')
         elif op == "DIV":
             self.register[reg_a] /= self.register[reg_b]
         else:
@@ -127,18 +139,9 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-        # commands = {
-        #     'LDI': 0b10000010,
-        #     'PRN': 0b01000111,
-        #     'HLT': 0b00000001,
-        #     'MUL': 0b10100010
-        # }
-
         while self.running:
 
             IR = self.ram_read(self.pc)
-            # operand_a = self.ram_read(self.pc+1)
-            # operand_b = self.ram_read(self.pc+2)
 
             if IR in self.branches:
                 self.branches[IR]()
@@ -151,23 +154,3 @@ class CPU:
             else:
                 print(f'{IR} not found in self.branches. Try again!')
                 sys.exit(1)
-            # if IR == commands['HLT']:
-            #     # print(f"HALTED")
-            #     self.running = False
-            # elif IR == commands['LDI']:
-            #     address = operand_a
-            #     value = operand_b
-            #     self.register[address] = value
-            #     # print(f'REGISTER {self.register}')
-            #     self.pc+=3
-            # elif IR == commands['PRN']:
-            #     address = operand_a
-            #     value = self.register[address]
-            #     print(value)
-            #     self.pc+=2
-            # elif IR == commands['MUL']:
-            #     self.alu('MUL', operand_a, operand_b)
-            #     self.pc+=3
-            # else:
-            #     print(f'NOT KNOWN {IR} AT ADDRESS {self.pc}')
-            #     sys.exit(1)
