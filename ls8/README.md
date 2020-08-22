@@ -60,6 +60,14 @@ but you'll have to implement those three above instructions first!
 ## Step 0: IMPORTANT: inventory what is here!
 
 * Make a list of files here.
+  * call.ls8 --> list of binary --> stores nums in memory, calls them and prints them
+  * interrupts.ls8 --> list of binary --> stores nums in memory, loops,, prints, adds, pushes and jumps
+  * keyboard.ls8 --> list of binary --> 
+  * mult.ls8 --> list of binary
+  * print8.ls8 --> list of binary
+  * printstr.ls8 --> list of binary --> 
+  * sctest.ls8 --> list of binary --> 
+  * stackoverflow.ls8 --> stores nums in memory, loops,, prints, adds, pushes and jumps
 * Write a short 3-10-word description of what each file does.
 * Note what has been implemented, and what hasn't.
 * Read this whole file.
